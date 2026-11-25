@@ -1,0 +1,20 @@
+name: Dual Smale critical chord
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ivan-fr/dual-smale-global
+          ref: 8765ad9cf76ab041f49c287889096568f51df5d9
+          path: upstream
+      - name: Install Elan
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Check the chord inequality, its corollary and the axiom reports
+        run: bash verify.sh upstream/lean
